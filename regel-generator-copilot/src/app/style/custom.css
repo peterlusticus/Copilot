@@ -1,0 +1,7 @@
+.MuiAutocomplete-inputRoot .MuiAutocomplete-input .Mui-expanded .MuiInputBase-root {
+    border: none !important;
+  }
+
+  legend{
+    display: none !important;
+  }
