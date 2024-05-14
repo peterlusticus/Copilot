@@ -30,8 +30,8 @@ export function UpdateFileModal(props: { open: boolean, setOpen: Dispatch<SetSta
   }, [file]);
 
   // Handle file upload event and update state
-  function handleChange(event: any) {
-    setFile(event.target.files[0]);
+  function handleChange(file: any) {
+    setFile(file);
     toast.success("XML-Datei erfolgreich hochgeladen!")
   }
 
@@ -179,26 +179,24 @@ export function UpdateFileModal(props: { open: boolean, setOpen: Dispatch<SetSta
                   <div className="mt-2 mx-0">
                     <div className="flex flex-col w-full">
                       <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                        <Dropzone onDrop={acceptedFiles => {setFile(acceptedFiles[0]) ;  toast.success("XML-Datei erfolgreich hochgeladen!")}}>
+                        <Dropzone onDrop={acceptedFiles => handleChange(acceptedFiles[0])}>
                           {({ getRootProps, getInputProps }) => (
                             <section>
                               <div {...getRootProps()}>
                                 <input {...getInputProps()} />
-                                <p>Drag 'n' drop some files here, or click to select files</p>
+                                <div className="text-center justify-center">
+                                  <ArrowUpTrayIcon className="h-5 w-5 text-gray-400 mx-auto" />
+                                  <div className="mt-4 flex text-sm leading-6 text-gray-600 ">
+                                    <label htmlFor="file-upload" className="relative cursor-pointer bg-white font-semibold text-indigo-600 text-base hover:text-indigo-500 mx-auto">
+                                      <span className=''>{!file && "XML-Datei hochladen"}{file && "XML-Datei aktualisieren"}</span>
+                                    </label>
+                                  </div>
+                                  <p className="text-xs leading-5 text-gray-600">.XML-Datei bis maximal 10MB</p>
+                                </div>
                               </div>
                             </section>
                           )}
                         </Dropzone>
-                        <div className="text-center justify-center">
-                          <ArrowUpTrayIcon className="h-5 w-5 text-gray-400 mx-auto" />
-                          <div className="mt-4 flex text-sm leading-6 text-gray-600 ">
-                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white font-semibold text-indigo-600 text-base hover:text-indigo-500 mx-auto">
-                              <span className=''>{!file && "XML-Datei hochladen"}{file && "XML-Datei aktualisieren"}</span>
-                              <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleChange} />
-                            </label>
-                          </div>
-                          <p className="text-xs leading-5 text-gray-600">.XML-Datei bis maximal 10MB</p>
-                        </div>
                       </div>
                     </div>
                   </div>
