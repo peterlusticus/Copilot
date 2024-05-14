@@ -1,13 +1,23 @@
 "use client";
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 import { toast } from 'react-toastify';
 
+//TODO: auslagern weil doppelt (siehe dropdoen.tsx)
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
 
+/**
+ * DropdownXml component.
+ * 
+ * @param props - The component props.
+ * @param props.items - An array of items for the dropdown, each containing a label and xml.
+ * @param props.value - The currently selected item, containing a label and xml.
+ * @param props.onChange - The function to be called when the selected item changes.
+ * @returns The DropdownXml component.
+ */
 export function DropdownXml(props: { items: { label: string, xml: ChildNode }[], value: { label: string, xml: ChildNode }, onChange: any }) {
     function showDisabledError() {
         if (props.items.length <= 1) {

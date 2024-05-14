@@ -1,48 +1,44 @@
-type Rule = {
-    wenn: [{ field: string, operator: string, value: string | number, logoperator: string }],
-    dann: [{ field: string, visibility: string, required: string | number }]
-}
+export type Rule = {
+    wenn: { field: string; operator: string; value: string | number; logoperator: string }[];
+    dann: { field: string; visibility: string; required: string }[];
+};
 
-export const rule: Rule = { wenn: [{ field: "", operator: "", value: "", logoperator: "" }], dann: [{ field: "", visibility: "", required: "" }] }
+export const rule: Rule = {
+    wenn: [{ field: "", operator: "", value: "", logoperator: "" }],
+    dann: [{ field: "", visibility: "", required: "" }],
+};
 
-export const setRuleValue = (prop: string, id: number, order: boolean, value: string) => {
+/**
+ * Sets the value of a property in the "wenn" or "dann" array of the Rule object.
+ * 
+ * @param prop - The property to set the value for. Can be a key of the "wenn" or "dann" array.
+ * @param id - The index of the element in the "wenn" or "dann" array.
+ * @param order - A boolean value indicating whether the property belongs to the "wenn" array (true) or the "dann" array (false).
+ * @param value - The value to set for the property.
+ */
+export const setRuleValue = (prop: keyof Rule["wenn"][number] | keyof Rule["dann"][number], id: number, order: boolean, value: string) => {
+    const targetArray = order ? rule.wenn : rule.dann
+
     if (order) {
         if (id >= rule.wenn.length) {
             rule.wenn.push({ field: "", operator: "", value: "", logoperator: "" });
         }
-        if (prop == "value") {
-            rule.wenn[id].value = value;
-        }
-        else if (prop == "field") {
-            rule.wenn[id].field = value;
-        }
-        else if (prop == "operator") {
-            rule.wenn[id].operator = value;
-        }
-        else if (prop == "logoperator") {
-            rule.wenn[id].logoperator = value;
-        }
+        (rule.wenn[id] as { [key: string]: string })[prop] = value;
     } else {
         if (id >= rule.dann.length) {
             rule.dann.push({ field: "", visibility: "", required: "" });
         }
-        if (prop == "visibility") {
-            rule.dann[id].visibility = value;
-        }
-        else if (prop == "field") {
-            rule.dann[id].field = value;
-        }
-        else if (prop == "required") {
-            rule.dann[id].required = value;
-        }
+        (rule.dann[id] as { [key: string]: string })[prop] = value;
     }
 }
 
+
+/**
+ * Deletes a rule value from the specified array based on the given id and order.
+ * @param id - The id of the rule value to be deleted.
+ * @param order - A boolean indicating whether the rule value is from the "wenn" array (true) or the "dann" array (false).
+ */
 export const delRuleValue = (id: number, order: boolean) => {
-    //todo delete if id <= rule.legth
-    if (order) {
-        rule.wenn.splice(id, 1)
-    } else {
-        rule.dann.splice(id, 1)
-    }
-}
+    const targetArray = order ? rule.wenn : rule.dann;
+    targetArray.splice(id, 1);
+};

@@ -5,6 +5,11 @@ import { DropdownXml } from './dropdownXml';
 import { toast } from 'react-toastify';
 import { FormItem } from './layout/formItem';
 
+import React from 'react'
+import Dropzone from 'react-dropzone'
+
+
+
 export function UpdateFileModal(props: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, setFieldsForRuleIf: Dispatch<SetStateAction<string[]>>, setFieldsForRuleThen: Dispatch<SetStateAction<string[]>> }) {
   const cancelButtonRef = useRef(null)
 
@@ -113,28 +118,27 @@ export function UpdateFileModal(props: { open: boolean, setOpen: Dispatch<SetSta
   // Update Datenfelder for selection in rule, based on selected Datenfeldgrupe
   useEffect(() => {
     if (selectedValueFromXML) {
-      const fieldArrIf = []
-      const fieldArrThen = []
+      const fieldArrIf: string[] = [];
+      const fieldArrThen: string[] = [];
 
-      let fields = selectedValueFromXML.xml.childNodes[0]?.parentElement?.getElementsByTagName("xdf:id")
+      let fields = selectedValueFromXML.xml.childNodes[0]?.parentElement?.getElementsByTagName("xdf:id");
 
       if (!selectedValueFromXML2.label.includes("Bitte wählen") && !selectedValueFromXML2.label.includes("Kein Filter")) {
-        fields = selectedValueFromXML2.xml.childNodes[0]?.parentElement?.getElementsByTagName("xdf:id")
+        fields = selectedValueFromXML2.xml.childNodes[0]?.parentElement?.getElementsByTagName("xdf:id");
       }
-      
+
       if (fields) {
         for (let i = 0; i < fields.length; i++) {
-          const content = fields[i].textContent
+          const content = fields[i].textContent;
           if (content) {
-            fieldArrThen.push(content)
-            if (content?.startsWith("F")) {
-              fieldArrIf.push(content)
+            fieldArrThen.push(content);
+            if (content.startsWith("F")) {
+              fieldArrIf.push(content);
             }
           }
-
         }
-        props.setFieldsForRuleIf(fieldArrIf)
-        props.setFieldsForRuleThen(fieldArrThen)
+        props.setFieldsForRuleIf(fieldArrIf);
+        props.setFieldsForRuleThen(fieldArrThen);
       }
     }
   }, [selectedValueFromXML, selectedValueFromXML2]);
@@ -175,6 +179,16 @@ export function UpdateFileModal(props: { open: boolean, setOpen: Dispatch<SetSta
                   <div className="mt-2 mx-0">
                     <div className="flex flex-col w-full">
                       <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                        <Dropzone onDrop={acceptedFiles => {setFile(acceptedFiles[0]) ;  toast.success("XML-Datei erfolgreich hochgeladen!")}}>
+                          {({ getRootProps, getInputProps }) => (
+                            <section>
+                              <div {...getRootProps()}>
+                                <input {...getInputProps()} />
+                                <p>Drag 'n' drop some files here, or click to select files</p>
+                              </div>
+                            </section>
+                          )}
+                        </Dropzone>
                         <div className="text-center justify-center">
                           <ArrowUpTrayIcon className="h-5 w-5 text-gray-400 mx-auto" />
                           <div className="mt-4 flex text-sm leading-6 text-gray-600 ">

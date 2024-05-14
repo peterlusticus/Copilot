@@ -1,13 +1,22 @@
 import { Combobox } from '@headlessui/react'
 import { CalculatorIcon, ListBulletIcon, PencilIcon } from '@heroicons/react/20/solid'
 import { useEffect, useState } from 'react'
-import { setRuleValue } from '../data/generate'
+import { Rule, setRuleValue } from '../data/generate'
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export function AutocompleteInput(props: {items: string[], prop: string, id: number}) {
+/**
+ * AutocompleteInput component.
+ * 
+ * @param props - The component props.
+ * @param props.items - An array of strings representing the available items for autocomplete.
+ * @param props.prop - A string representing the key for rule object.
+ * @param props.id - A number representing the id value.
+ * @returns The AutocompleteInput component.
+ */
+export function AutocompleteInput(props: {items: string[], prop: keyof Rule["wenn"][number] | keyof Rule["dann"][number], id: number}) {
     const [selectedField, setSelectedField] = useState('')
     const [query, setQuery] = useState('')
     const [selectedDatatype, setSelectedDatatype] = useState("string")

@@ -1,4 +1,4 @@
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { required, visibility } from "../data/data";
 import { Dropdown } from "./dropdown";
@@ -6,17 +6,27 @@ import { FormLine } from "./layout/formLine";
 import "../style/custom.css";
 import { delRuleValue } from "../data/generate";
 
-export function FormLineThan(props: {id: number, elArr: JSX.Element[], setEl: Dispatch<SetStateAction<JSX.Element[]>>, fields: string[]}) {
+export function FormLineThan(props: { id: number, elArr: JSX.Element[], setEl: Dispatch<SetStateAction<JSX.Element[]>>, fields: string[] }) {
   const id = props.id
 
   const handleDel = () => {
-    let elArr = Array.from(props.elArr)
+    let elArr = [...props.elArr]
+
+    const halfBeforeTheUnwantedElement = elArr.slice(0, 2)
+
+    const halfAfterTheUnwantedElement = elArr.slice(3);
+
+    const copyWithoutThirdElement = halfBeforeTheUnwantedElement.concat(halfAfterTheUnwantedElement);
+
+    console.log(props.elArr)
+
     elArr.splice(id, 1)
-    props.setEl(elArr)
+    props.setEl(copyWithoutThirdElement)
+    console.log(copyWithoutThirdElement)
     delRuleValue(id, false)
   }
 
-   return (
+  return (
     <div>
       <FormLine>
         <div className="w-4/12 mr-4"><Dropdown items={props.fields} prop={"field"} id={id} order={false} /></div>
