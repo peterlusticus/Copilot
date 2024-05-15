@@ -22,6 +22,8 @@ export function UpdateFileModal(props: { open: boolean, setOpen: Dispatch<SetSta
   const [selectedValueFromXML2, setSelectedValueFromXML2] = useState<{ label: string, xml: ChildNode }>({ label: "Bitte wählen", xml: document.createElement('div') });
   const [fieldsFromXML2, setFieldsFromXML2] = useState<{ label: string, xml: ChildNode }[]>([{ label: "Bitte wählen", xml: document.createElement('div') }]);
 
+  const [dropdownElements, setDropdownElements] = useState<React.JSX.Element[]>([]);
+
   // Upload file on change
   useEffect(() => {
     if (file) {
@@ -40,6 +42,25 @@ export function UpdateFileModal(props: { open: boolean, setOpen: Dispatch<SetSta
     let reader = new FileReader();
     reader.onload = () => setEbene1(reader.result == undefined ? "" : String(reader.result));
     reader.readAsText(file == undefined ? new File([""], "") : file);
+  }
+
+  function addKeinFilterAndSortArray(arr: { label: string; xml: ChildNode; }[], xml: Document) {
+    let arrCopy = [...arr]
+    arrCopy.push({ label: "aKein Filter", xml: xml.childNodes[0] })
+    console.log(xml)
+
+    // sort select options alphabetically and replace "aKein Filter"
+    arrCopy = arrCopy.sort(function (a, b) {
+      let x = a.label.toLowerCase();
+      let y = b.label.toLowerCase();
+      if (x < y) { return -1; }
+      if (x > y) { return 1; }
+      return 0;
+    });
+    const idxKeinFilter = arrCopy.findIndex(obj => obj.label == "aKein Filter")
+    arrCopy[idxKeinFilter] = { label: "Kein Filter", xml: arrCopy[idxKeinFilter].xml };
+
+    return arrCopy
   }
 
   // Parse XML-content for selection of Datenfeldgruppe
@@ -69,19 +90,7 @@ export function UpdateFileModal(props: { open: boolean, setOpen: Dispatch<SetSta
       }
     })
 
-    fieldGroupArr.push({ label: "aKein Filter", xml: xml.childNodes[0] })
-
-    // sort select options alphabetically and replace "aKein Filter"
-    fieldGroupArr = fieldGroupArr.sort(function (a, b) {
-      let x = a.label.toLowerCase();
-      let y = b.label.toLowerCase();
-      if (x < y) { return -1; }
-      if (x > y) { return 1; }
-      return 0;
-    });
-    const idxKeinFilter = fieldGroupArr.findIndex(obj => obj.label == "aKein Filter")
-    fieldGroupArr[idxKeinFilter] = { label: "Kein Filter", xml: fieldGroupArr[idxKeinFilter].xml };
-
+    fieldGroupArr = addKeinFilterAndSortArray(fieldGroupArr, xml)
     setFieldsFromXML(fieldGroupArr)
   };
 
@@ -92,24 +101,14 @@ export function UpdateFileModal(props: { open: boolean, setOpen: Dispatch<SetSta
     const elements = selectedGroup.xml.getElementsByTagName("xdf:datenfeldgruppe")
     for (let i = 0; i < elements.length; i++) {
       const element = elements[i];
-      const name = element.getElementsByTagName("xdf:name")[0].textContent;
-      if (name !== null) {
-        groupsInSelectedGroup.push({ label: name, xml: element })
+      const name = element.getElementsByTagName("xdf:name")[0]?.textContent;
+      if (name) {
+        groupsInSelectedGroup.push({ label: name, xml: element });
       }
     }
 
-    groupsInSelectedGroup.push({ label: "aKein Filter", xml: document.createElement('div') })
+    groupsInSelectedGroup = addKeinFilterAndSortArray(groupsInSelectedGroup, selectedGroup.xml)
 
-    // sort select options alphabetically and replace "aKein Filter"
-    groupsInSelectedGroup = groupsInSelectedGroup.sort(function (a, b) {
-      let x = a.label.toLowerCase();
-      let y = b.label.toLowerCase();
-      if (x < y) { return -1; }
-      if (x > y) { return 1; }
-      return 0;
-    });
-    const idxKeinFilter = groupsInSelectedGroup.findIndex(obj => obj.label == "aKein Filter")
-    groupsInSelectedGroup[idxKeinFilter] = { label: "Kein Filter", xml: groupsInSelectedGroup[idxKeinFilter].xml };
     setFieldsFromXML2(groupsInSelectedGroup)
     setSelectedValueFromXML2({ label: "Bitte wählen", xml: document.createElement('div') })
     setSelectedValueFromXML(selectedGroup)
